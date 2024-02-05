@@ -21,12 +21,12 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
-        resources:
-          requests:
-            memory: "1Gi"
-            cpu: "200m"
-          limits:
-            memory: "1512Mi"
-            cpu: "400m"
+        #resources:
+        #  requests:
+        #    memory: "1Gi"
+        #    cpu: "200m"
+        #  limits:
+        #    memory: "1512Mi"
+        #    cpu: "400m"
       imagePullSecrets:
       - name: quay-registry-secret
