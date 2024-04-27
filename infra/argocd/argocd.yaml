@@ -1,18 +1,18 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: grafana
-  namespace: monitoring
+  name: argocd
+  namespace: argocd
 spec:
   ingressClassName: nginx
   rules:
-    - host: "grafana.openetra.net"
+    - host: "argocd.openetra.net"
       http:
         paths:
           - path: "/"
             pathType: Prefix
             backend:
               service:
-                name: stable-grafana
+                name: argocd-server
                 port:
                   number: 80
