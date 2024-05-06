@@ -35,6 +35,28 @@ pipeline {
                     }
                 }
             }
+            post{
+                success {
+                    script{
+                        echo "Success, continue to next stage..."
+                    }
+                }
+                failure {
+                    script{
+                        error "Failed, exiting now..."
+                    }
+                }
+                aborted {
+                    script{
+                        error "Aborted, exiting now..."
+                    }
+                }
+                unstable {
+                    script{
+                        error "Unstable, exiting now..."                    
+                    }
+                }
+            }
         }
         stage('Push Image and delete locally') {
             steps {
@@ -72,6 +94,17 @@ pipeline {
                 withCredentials([string(credentialsId: "argocd-auth-token", variable: 'ARGOCD_AUTH_TOKEN')]) {
                     sh 'argocd --grpc-web app sync openetra-be-staging --prune --force'
                 }
+            }
+        }
+    }
+    post {
+        always {
+            deleteDir()
+            dir("${workspace}@tmp") {
+                deleteDir()
+            }
+            dir("${workspace}@script") {
+                deleteDir()
             }
         }
     }
