@@ -10,15 +10,25 @@ pipeline {
             steps{
                 script{
                     dir('AN-OPEN-NETRA-FE'){
-                        git branch: 'develop',
+                        git branch: 'bagus',
                            //credentialsId: 'github_access_token',
-                            url: "https://github.com/whiwk/netra_frontend.git"
+                            url: "https://github.com/whiwk/caps_frontend.git"
                         script{
                             env.COMMIT_SHORT_SHA = sh (
                                 script: 'git log --pretty=format:\'%h\' -n 1',
                                 returnStdout: true
                             ).trim()
                         }
+                    }
+                }
+            }           
+        }
+        stage('Build Image') {
+            steps {
+                script {
+                    dir('AN-OPEN-NETRA-BE') {
+                        pwd
+                        sh 'docker build -t quay.tiplab.local/openetra/fe:${COMMIT_SHORT_SHA} -f Dockerfile .'
                     }
                 }
             }
@@ -41,15 +51,6 @@ pipeline {
                 unstable {
                     script{
                         error "Unstable, exiting now..."                    
-                    }
-                }
-            }        
-        }
-        stage('Build Image') {
-            steps {
-                script {
-                    dir('AN-OPEN-NETRA-FE') {
-                        sh 'docker build -t quay.tiplab.local/openetra/fe:${COMMIT_SHORT_SHA} .'
                     }
                 }
             }
