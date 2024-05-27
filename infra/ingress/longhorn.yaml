@@ -3,14 +3,10 @@ kind: Ingress
 metadata:
   name: longhorn
   namespace: longhorn-system
-  annotations:
-    nginx.ingress.kubernetes.io/auth-type: basic
-    nginx.ingress.kubernetes.io/auth-secret: auth-secret
-    nginx.ingress.kubernetes.io/auth-secret-type: auth-file
 spec:
   ingressClassName: nginx
   rules:
-    - host: "longhorn.openetra.net"
+    - host: "longhorn.orca.edu"
       http:
         paths:
           - path: "/"

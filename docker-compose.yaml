@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  jenkins:
+    image: jenkins:test
+    container_name: jenkins
+    ports:
+      - "8080:8080"
+    environment:
+      - CASC_JENKINS_CONFIG=/var/jenkins_home/casc.yaml
+    volumes:
+      - ./jenkins_home:/var/jenkins_home
+      - ./casc.yaml:/var/jenkins_home/casc.yaml
+      - ./folder.groovy:/var/jenkins_home/jobs/create-folders/workspace/folder.groovy
+    restart: always
