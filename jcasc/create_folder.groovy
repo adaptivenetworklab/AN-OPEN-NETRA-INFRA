@@ -1,4 +1,4 @@
-folder('infrastructure') {
+folder('infra') {
     description('this folder contains all infrastructure related jobs')
 }
 
