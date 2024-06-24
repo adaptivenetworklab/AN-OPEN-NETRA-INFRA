@@ -1,109 +1,33 @@
 pipeline {
     agent { 
-        label 'vm4'
-    }
-    environment{
-        GITHUB_ACCESS_TOKEN = credentials("github_access_token")
-    }
+        label 'vm4' 
+        }
     stages {
-        stage('Setup Environment'){
-            steps{
-                script{
-                    dir('AN-OPEN-NETRA-BE'){
-                        git branch: 'develop',
-                           //credentialsId: 'github_access_token',
-                            url: "https://github.com/whiwk/netra_backend.git"
-                        script{
-                            env.COMMIT_SHORT_SHA = sh (
-                                script: 'git log --pretty=format:\'%h\' -n 1',
-                                returnStdout: true
-                            ).trim()
-                        }
-                        sh "sed -i \"s/'HOST': '.*'/'HOST': 'backend-db.staging'/g\" netra_backend/settings.py"
-                        sh "awk '/^DATABASES = {/,/^    }/ {if (!/^\\s*#/) print}' netra_backend/settings.py"
-
-                    }
-                }
-            }           
-        }
-        stage('Build Image') {
+        stage('Build Docker Image') {
             steps {
                 script {
-                    dir('AN-OPEN-NETRA-BE') {
-                        sh 'docker build -t quay.tiplab.local/orca/be:${COMMIT_SHORT_SHA} -f deployment/Dockerfile.base .'
-                    }
-                }
-            }
-            post{
-                success {
-                    script{
-                        echo "Success, continue to next stage..."
-                    }
-                }
-                failure {
-                    script{
-                        error "Failed, exiting now..."
-                    }
-                }
-                aborted {
-                    script{
-                        error "Aborted, exiting now..."
-                    }
-                }
-                unstable {
-                    script{
-                        error "Unstable, exiting now..."                    
-                    }
+                    sh 'docker build -t quay.tiplab.local/openetra/be:dev -f $HOME/NETRA/netra_backend/deployment/Dockerfile.base $HOME/NETRA/netra_backend/'
                 }
             }
         }
-        stage('Push Image and delete locally') {
+        stage('Push Docker Image') {
             steps {
                 script {
-                    sh 'docker push quay.tiplab.local/orca/be:${COMMIT_SHORT_SHA}'
-                    sh 'docker rmi quay.tiplab.local/orca/be:${COMMIT_SHORT_SHA}'
+                    sh 'docker push quay.tiplab.local/openetra/be:dev'
                 }
             }
         }
-        stage('Change Image Tag on Github'){
-                    steps {
-                        script{
-                            env.GIT_URL = "https://oauth2:${GITHUB_ACCESS_TOKEN}@github.com/adaptivenetworklab/AN-OPEN-NETRA-MANIFESTS.git"
-                        }
-                        dir('AN-OPEN-NETRA-MANIFESTS'){
-                            git branch: 'main',
-                                url: "$GIT_URL"
-                            sh 'git config user.email gintingari73@gmail.com && git config user.name arigints'
-                            sh 'sed -i "s+quay.tiplab.local/openetra/be:.*+quay.tiplab.local/orca/be:${COMMIT_SHORT_SHA}+g" app/overlay/staging/backend/deployment.yaml'
-                            sh 'git add . && git commit -m "(bot) update backend deployment.yaml image tag to ${COMMIT_SHORT_SHA}" || true'
-                            sh 'git push origin main'
-                        }
-                    }
-                }
-        stage('Argocd Setup') {
+        stage('Restart Docker Compose') {
             steps {
-                withCredentials([string(credentialsId: "argocd-auth-token", variable: 'ARGOCD_AUTH_TOKEN')]) {
-                    sh "argocd repo add https://github.com/adaptivenetworklab/AN-OPEN-NETRA-MANIFESTS.git --type git --username arigints --password ${GITHUB_ACCESS_TOKEN} --upsert"
-                    sh 'ARGOCD_SERVER=10.30.1.214:31844 argocd --grpc-web app create orca-be-staging --project default --repo https://github.com/adaptivenetworklab/AN-OPEN-NETRA-MANIFESTS.git --path app/overlay/staging/backend --revision main --dest-namespace staging --dest-server https://kubernetes.default.svc --upsert'
+                script {
+                    sh 'docker compose -f $HOME/NETRA/netra_backend/deployment/docker-compose.yml down backend'
+                    sh 'docker compose -f $HOME/NETRA/netra_backend/deployment/docker-compose.yml up backend -d'
                 }
             }
         }
-        stage('Argocd Sync') {
+        stage('Clean Jenkins Workspace') {
             steps {
-                withCredentials([string(credentialsId: "argocd-auth-token", variable: 'ARGOCD_AUTH_TOKEN')]) {
-                    sh 'argocd --grpc-web app sync orca-be-staging --prune --force'
-                }
-            }
-        }
-    }
-    post {
-        always {
-            deleteDir()
-            dir("${workspace}@tmp") {
-                deleteDir()
-            }
-            dir("${workspace}@script") {
-                deleteDir()
+                cleanWs()
             }
         }
     }
