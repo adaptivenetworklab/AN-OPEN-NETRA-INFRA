@@ -9,6 +9,7 @@ jenkins:
       allowsSignup: false
       users:
         - id: "ari"
+          name: "Ari Erginta Ginting"
           password: "ari123"
         - id: "bagus"
           name: "Bagus Dwi Prasetyo"
@@ -57,7 +58,7 @@ jenkins:
   nodes:
     - permanent:
         labelString: "agent for development"
-        mode: "NORMAL"
+        mode: "EXCLUSIVE"
         name: "vm4"
         numExecutors: 1
         remoteFS: "/var/lib/jenkins"
@@ -93,7 +94,7 @@ credentials:
               description: "Credentials for Argo CD token"
           - string:
               scope: GLOBAL
-              id: "github-access-token"
+              id: "github_access_token"
               secret: "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"
               description: "Token for Github Repositories"
 jobs:
@@ -140,3 +141,4 @@ jobs:
 unclassified:
   location:
     url: http://jenkins.orca.edu
+    adminAddress: "gintingari73@gmail.com"
