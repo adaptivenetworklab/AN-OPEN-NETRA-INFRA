@@ -78,7 +78,7 @@ jenkins:
       - key: "DISCORD_WEBHOOK"
         value: "https://discord.com/api/webhooks/1254708328790233200/B4-aQudHShqqThHA1Bq59DVBzAs_HT5KZ6toNYn9CBGEfOBQAxFNyQaYaeyCpECJD-J0"
 credentials:
-  system: 
+  system:
     domainCredentials:
       - credentials:
           - usernamePassword:
@@ -107,7 +107,7 @@ jobs:
                 agent {
                   label 'vm4'
                 }
-                stages {               
+                stages {
                   stage('seed or update all pipelines') {
                     steps {
                       dir('initial-dsl-folder') {
@@ -119,10 +119,10 @@ jobs:
                         ].join('\\n')
                       }
                     }
-                  }               
+                  }
                 }
-                post { 
-                  always { 
+                post {
+                  always {
                     deleteDir()
                     dir("${workspace}@tmp") {
                       deleteDir()
