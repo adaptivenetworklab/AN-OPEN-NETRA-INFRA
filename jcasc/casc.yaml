@@ -25,15 +25,15 @@ jenkins:
                 emailAddress: "user@example.com"
   authorizationStrategy:
     globalMatrix:
-      permissions:
-        - "Overall/Administer:admin"
-        - "Overall/Read:authenticated"
-        - "Job/Build:user"
-        - "Job/Cancel:user"
-        - "Job/Read:user"
-        - "Job/Discover:user"
-        - "Job/Read:authenticated"
-        - "View/Read:anonymous"
+      entries:
+        - "admin:Overall/Administer"
+        - "authenticated:Overall/Read"
+        - "user:Job/Build"
+        - "user:Job/Cancel"
+        - "user:Job/Read"
+        - "user:Job/Discover"
+        - "authenticated:Job/Read"
+        - "anonymous:View/Read"
   nodes:
     - permanent:
         labelString: "agent for development"
@@ -69,6 +69,7 @@ jobs:
                             url: 'https://github.com/adaptivenetworklab/AN-OPEN-NETRA-INFRA'
                         jobDsl targets: [
                             'pipeline/create_folder.groovy',
+                            'pipeline/*/*.groovy'
                         ].join('\\n')
                       }
                     }
