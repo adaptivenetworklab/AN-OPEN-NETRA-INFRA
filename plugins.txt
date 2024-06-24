@@ -1,3 +1,0 @@
-ws-cleanup:latest
-job-dsl:latest
-blueocean:latest
