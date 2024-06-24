@@ -1,0 +1,27 @@
+# plugins.txt
+
+build-timeout
+caffeine-api
+checks-api
+configuration-as-code
+credentials
+credentials-binding
+display-url-api
+matrix-auth
+matrix-project
+git
+git-client
+github
+github-api
+github-branch-source
+pipeline-build-step
+pipeline-stage-step
+pipeline-stage-tags-metadata
+pipeline-stage-view
+plain-credentials
+plugin-util-api
+scm-api
+ssh-slaves
+sshd
+ws-cleanup
+job-dsl
