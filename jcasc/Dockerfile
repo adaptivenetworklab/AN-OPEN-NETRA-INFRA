@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y lsb-release git
 
 USER jenkins
 
-ENV JAVA_OPTS -Djenkins.install.runSetupWizard=false
+ENV JAVA_OPTS -Djenkins.install.runSetupWizard=false -Duser.timezone=Asia/Jakarta
 
 COPY ./casc.yaml /var/jenkins_home/casc.yaml
 ENV CASC_JENKINS_CONFIG /var/jenkins_home/casc.yaml

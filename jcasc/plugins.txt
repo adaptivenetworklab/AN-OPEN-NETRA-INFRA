@@ -7,7 +7,6 @@ configuration-as-code
 credentials
 credentials-binding
 display-url-api
-matrix-auth
 matrix-project
 git
 git-client
@@ -26,3 +25,5 @@ sshd
 ws-cleanup
 job-dsl
 workflow-aggregator
+role-strategy
+discord-notifier
