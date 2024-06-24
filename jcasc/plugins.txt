@@ -25,3 +25,4 @@ ssh-slaves
 sshd
 ws-cleanup
 job-dsl
+workflow-aggregator

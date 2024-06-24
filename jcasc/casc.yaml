@@ -68,7 +68,7 @@ jobs:
                         git branch: 'main',
                             url: 'https://github.com/adaptivenetworklab/AN-OPEN-NETRA-INFRA'
                         jobDsl targets: [
-                            'jcasc/create-folder.groovy',
+                            'pipeline/create_folder.groovy',
                         ].join('\\n')
                       }
                     }
