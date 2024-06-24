@@ -52,55 +52,52 @@ jenkins:
             sshHostKeyVerificationStrategy:
               nonVerifyingKeyVerificationStrategy: {}
 jobs:
-- script: >
-    pipelineJob("inital-dsl") {
-      definition {
-        cps{
-          script('''
-            pipeline {
-              agent {
-                label 'vm4'
-              }
-              stages {               
-                stage('seed or update all pipelines') {
-                  steps{
-                    dir('initial-dsl-folder'){
-                      git branch: 'main',
-                          credentialsId: 'github_access_token',
-                          url: 'https://github.com/adaptivenetworklab/AN-OPEN-NETRA-INFRA'
-                      jobDsl targets: [
-                          'job/folder.groovy',
-                          'job/*/*.groovy',
-                          'job/*/*/*.groovy'
-                      ].join('\\n')
+  - script: >
+      pipelineJob("inital-dsl") {
+        definition {
+          cps{
+            script('''
+              pipeline {
+                agent {
+                  label 'vm4'
+                }
+                stages {               
+                  stage('seed or update all pipelines') {
+                    steps{
+                      dir('initial-dsl-folder'){
+                        git branch: 'main',
+                            url: 'https://github.com/adaptivenetworklab/AN-OPEN-NETRA-INFRA'
+                        jobDsl targets: [
+                            'jcasc/create-folder.groovy',
+                        ].join('\\n')
+                      }
+                    }
+                  }               
+                }
+                post { 
+                  always { 
+                    deleteDir()
+                    dir("${workspace}@tmp") {
+                      deleteDir()
+                    }
+                    dir("${workspace}@script") {
+                      deleteDir()
                     }
                   }
-                }               
-              }
-              post { 
-                always { 
-                  deleteDir()
-                  dir("${workspace}@tmp") {
-                      deleteDir()
-                  }
-                  dir("${workspace}@script") {
-                      deleteDir()
-                  }
                 }
-              }
-            } 
-          '''.stripIndent())
-          sandbox()        
+              } 
+            '''.stripIndent())
+            sandbox()        
+          }
         }
-      }
-    }             
-# credentials:
-#   system:
-#     domainCredentials:
-#       - credentials:
-#           - usernamePassword:
-#               scope: GLOBAL
-#               id: "agent-creds"
-#               username: "bagus"
-#               password: "bagus"
-#               description: "Username/Password Credentials for connecting development VM as jenkins agent"
+      }             
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+          - usernamePassword:
+              scope: GLOBAL
+              id: "agent-creds"
+              username: "bagus"
+              password: "bagus"
+              description: "Username/Password Credentials for connecting development VM as jenkins agent"
