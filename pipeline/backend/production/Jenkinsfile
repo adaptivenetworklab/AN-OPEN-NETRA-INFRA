@@ -9,7 +9,7 @@ pipeline {
         stage('Setup Environment'){
             steps{
                 script{
-                    dir('AN-OPEN-NETRA-BE'){
+                    dir('AN-ORCA-BE'){
                         git branch: 'main',
                            //credentialsId: 'github_access_token',
                             url: "https://github.com/whiwk/netra_backend.git"
@@ -26,8 +26,8 @@ pipeline {
         stage('Build Image') {
             steps {
                 script {
-                    dir('AN-OPEN-NETRA-BE') {
-                        sh 'docker build -t quay.tiplab.local/openetra/be:${COMMIT_SHORT_SHA} .'
+                    dir('AN-ORCA-BE') {
+                        sh 'docker build -t quay.tiplab.local/orca/be:${COMMIT_SHORT_SHA} .'
                     }
                 }
             }
@@ -35,8 +35,8 @@ pipeline {
         stage('Push Image and delete locally') {
             steps {
                 script {
-                    sh 'docker push quay.tiplab.local/openetra/be:${COMMIT_SHORT_SHA}'
-                    sh 'docker rmi quay.tiplab.local/openetra/be:${COMMIT_SHORT_SHA}'
+                    sh 'docker push quay.tiplab.local/orca/be:${COMMIT_SHORT_SHA}'
+                    sh 'docker rmi quay.tiplab.local/orca/be:${COMMIT_SHORT_SHA}'
                 }
             }
         }
@@ -45,11 +45,11 @@ pipeline {
                         script{
                             env.GIT_URL = "https://oauth2:${GITHUB_ACCESS_TOKEN}@github.com/adaptivenetworklab/AN-OPEN-NETRA-MANIFESTS.git"
                         }
-                        dir('AN-OPEN-NETRA-MANIFESTS'){
+                        dir('AN-ORCA-MANIFESTS'){
                             git branch: 'main',
                                 url: "$GIT_URL"
                             sh 'git config user.email gintingari73@gmail.com && git config user.name arigints'
-                            sh 'sed -i "s+quay.tiplab.local/openetra/be:.*+quay.tiplab.local/openetra/be:${COMMIT_SHORT_SHA}+g" app/overlay/staging/backend/deployment.yaml'
+                            sh 'sed -i "s+quay.tiplab.local/orca/be:.*+quay.tiplab.local/orca/be:${COMMIT_SHORT_SHA}+g" app/overlay/staging/backend/deployment.yaml'
                             sh 'git add . && git commit -m "(bot) update backend deployment.yaml image tag to ${COMMIT_SHORT_SHA}" || true'
                             sh 'git push origin main'
                         }
@@ -59,14 +59,14 @@ pipeline {
             steps {
                 withCredentials([string(credentialsId: "argocd-auth-token", variable: 'ARGOCD_AUTH_TOKEN')]) {
                     sh "argocd repo add https://github.com/adaptivenetworklab/AN-OPEN-NETRA-MANIFESTS.git --type git --username arigints --password ${GITHUB_ACCESS_TOKEN} --upsert"
-                    sh 'ARGOCD_SERVER=10.30.1.214:31844 argocd --grpc-web app create openetra-be-production --project default --repo https://github.com/adaptivenetworklab/AN-OPEN-NETRA-MANIFESTS.git --path app/overlay/production/backend --revision main --dest-namespace production --dest-server https://kubernetes.default.svc --upsert'
+                    sh 'ARGOCD_SERVER=10.30.1.214:31844 argocd --grpc-web app create orca-be-production --project default --repo https://github.com/adaptivenetworklab/AN-OPEN-NETRA-MANIFESTS.git --path app/overlay/production/backend --revision main --dest-namespace production --dest-server https://kubernetes.default.svc --upsert'
                 }
             }
         }
         stage('Argocd Sync') {
             steps {
                 withCredentials([string(credentialsId: "argocd-auth-token", variable: 'ARGOCD_AUTH_TOKEN')]) {
-                    sh 'argocd --grpc-web app sync openetra-be-production --prune --force'
+                    sh 'argocd --grpc-web app sync orca-be-production --prune --force'
                 }
             }
         }

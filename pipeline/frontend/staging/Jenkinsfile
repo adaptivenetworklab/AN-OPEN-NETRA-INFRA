@@ -9,7 +9,7 @@ pipeline {
         stage('Setup Environment'){
             steps{
                 script{
-                    dir('AN-OPEN-NETRA-FE'){
+                    dir('AN-ORCA-FE'){
                         git branch: 'bagus',
                            //credentialsId: 'github_access_token',
                             url: "https://github.com/whiwk/caps_frontend.git"
@@ -26,8 +26,7 @@ pipeline {
         stage('Build Image') {
             steps {
                 script {
-                    dir('AN-OPEN-NETRA-FE') {
-                        sh 'pwd'
+                    dir('AN-ORCA-FE') {
                         sh 'docker build -t quay.tiplab.local/orca/fe:${COMMIT_SHORT_SHA} .'
                     }
                 }
@@ -68,11 +67,11 @@ pipeline {
                         script{
                             env.GIT_URL = "https://oauth2:${GITHUB_ACCESS_TOKEN}@github.com/adaptivenetworklab/AN-OPEN-NETRA-MANIFESTS.git"
                         }
-                        dir('AN-OPEN-NETRA-MANIFESTS'){
+                        dir('AN-ORCA-MANIFESTS'){
                             git branch: 'main',
                                 url: "$GIT_URL"
                             sh 'git config user.email gintingari73@gmail.com && git config user.name arigints'
-                            sh 'sed -i "s+quay.tiplab.local/openetra/fe:.*+quay.tiplab.local/orca/fe:${COMMIT_SHORT_SHA}+g" app/overlay/staging/frontend/deployment.yaml'
+                            sh 'sed -i "s+quay.tiplab.local/orca/fe:.*+quay.tiplab.local/orca/fe:${COMMIT_SHORT_SHA}+g" app/overlay/staging/frontend/deployment.yaml'
                             sh 'git add . && git commit -m "(bot) update frontend deployment.yaml image tag to ${COMMIT_SHORT_SHA}" || true'
                             sh 'git push origin main'
                         }

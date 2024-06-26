@@ -95,7 +95,7 @@ credentials:
           - string:
               scope: GLOBAL
               id: "github_access_token"
-              secret: "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"
+              secret: "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"
               description: "Token for Github Repositories"
 jobs:
   - script: >

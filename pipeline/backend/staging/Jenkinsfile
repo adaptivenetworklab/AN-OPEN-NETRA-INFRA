@@ -6,14 +6,14 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh 'docker build -t quay.tiplab.local/openetra/be:dev -f $HOME/NETRA/netra_backend/deployment/Dockerfile.base $HOME/NETRA/netra_backend/'
+                    sh 'docker build -t quay.tiplab.local/orca/be:dev -f $HOME/NETRA/netra_backend/deployment/Dockerfile.base $HOME/NETRA/netra_backend/'
                 }
             }
         }
         stage('Push Docker Image') {
             steps {
                 script {
-                    sh 'docker push quay.tiplab.local/openetra/be:dev'
+                    sh 'docker push quay.tiplab.local/orca/be:dev'
                 }
             }
         }
