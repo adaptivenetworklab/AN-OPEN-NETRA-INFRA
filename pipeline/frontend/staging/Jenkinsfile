@@ -20,6 +20,12 @@ pipeline {
                             ).trim()
                         }
                     }
+                    def title = "Pipeline ${env.JOB_BASE_NAME} #${env.BUILD_NUMBER}"
+                    discordSend description: 'Pipeline has started.', 
+                                link: env.BUILD_URL, 
+                                result: 'STARTED', 
+                                title: title, 
+                                webhookURL: env.DISCORD_WEBHOOK
                 }
             }           
         }
@@ -94,6 +100,44 @@ pipeline {
         }
     }
     post {
+        success {
+            script {
+                // Send notification to Discord on successful completion
+                def result = currentBuild.currentResult.toLowerCase()
+                discordSend webhookURL: DISCORD_WEBHOOK,
+                            result: currentBuild.currentResult,
+                            description: "**Build:** ${env.BUILD_NUMBER}\n**Status:** ${result}\n\u2060", /* word joiner character forces a blank line */
+                            notes: "Hey <@588945460719255562>, here's some Notes!",
+                            showChangeset: true
+            }
+        }
+        failure {
+            script {
+                // Send notification to Discord on failure
+                discordSend webhookURL: env.DISCORD_WEBHOOK,
+                            description: 'Pipeline has failed.',
+                            result: 'FAILURE', 
+                            notes: "Hey <@588945460719255562>, the pipeline is failure"
+            }
+        }
+        aborted {
+            script {
+                // Send notification to Discord on failure
+                discordSend webhookURL: env.DISCORD_WEBHOOK,
+                            description: 'Pipeline has aborted.',
+                            result: 'ABORTED', 
+                            notes: "Hey <@588945460719255562>, the pipeline is aborted"           
+            }
+        }
+        unstable {
+            script {
+                // Send notification to Discord on failure
+                discordSend webhookURL: env.DISCORD_WEBHOOK,
+                            description: 'Pipeline has unstable.',
+                            result: 'UNSTABLE', 
+                            notes: "Hey <@588945460719255562>, the pipeline is unstable"
+            }
+        }
         always {
             deleteDir()
             dir("${workspace}@tmp") {
