@@ -10,7 +10,7 @@ pipeline {
             steps{
                 script{
                     dir('AN-ORCA-BE'){
-                        git branch: 'main',
+                        git branch: 'develop',
                            //credentialsId: 'github_access_token',
                             url: "https://github.com/whiwk/netra_backend.git"
                         script{
@@ -87,14 +87,14 @@ pipeline {
             steps {
                 withCredentials([string(credentialsId: "argocd-auth-token", variable: 'ARGOCD_AUTH_TOKEN')]) {
                     sh "argocd repo add https://github.com/adaptivenetworklab/AN-OPEN-NETRA-MANIFESTS.git --type git --username arigints --password ${GITHUB_ACCESS_TOKEN} --upsert"
-                    sh 'ARGOCD_SERVER=10.30.1.214:31844 argocd --grpc-web app create orca-be-production --project default --repo https://github.com/adaptivenetworklab/AN-OPEN-NETRA-MANIFESTS.git --path app/overlay/production/backend --revision main --dest-namespace production --dest-server https://kubernetes.default.svc --upsert'
+                    sh 'ARGOCD_SERVER=10.30.1.214:31844 argocd --grpc-web app create orca-be-staging --project default --repo https://github.com/adaptivenetworklab/AN-OPEN-NETRA-MANIFESTS.git --path app/overlay/staging/backend --revision main --dest-namespace staging --dest-server https://kubernetes.default.svc --upsert'
                 }
             }
         }
         stage('Argocd Sync') {
             steps {
                 withCredentials([string(credentialsId: "argocd-auth-token", variable: 'ARGOCD_AUTH_TOKEN')]) {
-                    sh 'argocd --grpc-web app sync orca-be-production --prune --force'
+                    sh 'argocd --grpc-web app sync orca-be-staging --prune --force'
                 }
             }
         }
