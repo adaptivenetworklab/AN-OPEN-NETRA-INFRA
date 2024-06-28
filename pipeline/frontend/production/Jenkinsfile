@@ -20,7 +20,7 @@ pipeline {
                             ).trim()
                         }
                     }
-                    def title = "Pipeline ${env.JOB_BASE_NAME} #${env.BUILD_NUMBER}"
+                    def title = "Pipeline orca/frontend ${env.JOB_BASE_NAME} #${env.BUILD_NUMBER}"
                     discordSend description: 'Pipeline has started.', 
                                 link: env.BUILD_URL, 
                                 result: 'STARTED', 
@@ -107,7 +107,6 @@ pipeline {
                 discordSend webhookURL: DISCORD_WEBHOOK,
                             result: currentBuild.currentResult,
                             description: "**Build:** ${env.BUILD_NUMBER}\n**Status:** ${result}\n\u2060", /* word joiner character forces a blank line */
-                            notes: "Hey <@588945460719255562>, here's some Notes!",
                             showChangeset: true
             }
         }
