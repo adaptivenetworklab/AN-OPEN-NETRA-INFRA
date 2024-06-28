@@ -1,4 +1,4 @@
-pipelineJob('orca/production/frontend') {
+pipelineJob('orca/frontend/production') {
     definition {
         cps {
             script(readFileFromWorkspace('pipeline/frontend/production/Jenkinsfile'))
@@ -6,7 +6,7 @@ pipelineJob('orca/production/frontend') {
         }
     }
 }
-pipelineJob('orca/staging/frontend') {
+pipelineJob('orca/frontend/staging') {
     definition {
         cps {
             script(readFileFromWorkspace('pipeline/frontend/staging/Jenkinsfile'))

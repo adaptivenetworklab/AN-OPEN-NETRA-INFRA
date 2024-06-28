@@ -3,33 +3,33 @@ folder('infra') {
 }
 
 folder('infra/argocd') {
-    description('this folder contains all nginx related jobs')
+    description('this folder contains all argocd related jobs')
 }
 
 folder('infra/jenkins') {
-    description('this folder contains all prometheus related jobs')
+    description('this folder contains all jenkins related jobs')
 }
 
 folder('infra/nginx') {
-    description('this folder contains all DNS adaptivenetlab.site related jobs')
+    description('this folder contains all nginx ingress related jobs')
 }
 
 folder('infra/longhorn') {
-    description('this folder contains all DNS adaptivenetworklab.org related jobs')
+    description('this folder contains all longhorn related jobs')
 }
 
 folder('orca') {
     description('this folder contains all website related jobs')
 }
 
-folder('orca/production') {
-    description('website production jobs')
+folder('orca/backend') {
+    description('website backend jobs')
 }
 
-folder('orca/staging') {
-    description('website staging jobs')
+folder('orca/frontend') {
+    description('website frontend jobs')
 }
 
 folder('5gcore') {
-    description('this folder contains all gaboot related jobs')
+    description('this folder contains all 5gcore related jobs')
 }
