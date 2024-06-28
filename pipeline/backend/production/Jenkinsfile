@@ -33,7 +33,7 @@ pipeline {
             steps {
                 script {
                     dir('AN-ORCA-BE') {
-                        sh 'docker build -t quay.tiplab.local/orca/be:${COMMIT_SHORT_SHA} .'
+                        sh 'docker build -t quay.tiplab.local/orca/be:${COMMIT_SHORT_SHA} -f deployment/Dockerfile.base .'
                     }
                 }
             }
